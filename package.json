@@ -1,0 +1,28 @@
+{
+  "name": "tiny-http-client",
+  "version": "0.1.0",
+  "description": "Zero dependency, native promise based HTTP/HTTPS client for Node.js 4+.",
+  "main": "TinyHttpClient.js",
+  "scripts": {
+    "test": "jasmine spec/TinyHttpClient.spec.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/foo4u/tiny-http-client.git"
+  },
+  "bugs": {
+    "url": "https://github.com/foo4u/tiny-http-client/issues"
+  },
+  "homepage": "https://github.com/foo4u/tiny-http-client#readme",
+  "keywords": [
+    "http",
+    "https",
+    "promise",
+    "tiny"
+  ],
+  "author": "Scott Rossillo",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "jasmine": "^2.5.3"
+  }
+}
