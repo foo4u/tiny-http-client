@@ -42,10 +42,9 @@ HTTP GET requests will internally buffer the body and return it once the promise
 
 HTTP HEAD requests will return a promise resolving response headers if the request is successful.
 
-    client.get({path: '/users/foo4u'})
-        .then(JSON.parse)
-        .then((jsonBody) => {
-          console.log(jsonBody);
+    client.head({path: '/users/foo4u'})
+        .then((headers) => {
+          console.log(headers);
         });
         .catch((err) => {
           console.log(err);
