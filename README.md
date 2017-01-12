@@ -43,12 +43,12 @@ HTTP GET requests will internally buffer the body and return it once the promise
 HTTP HEAD requests will return a promise resolving response headers if the request is successful.
 
     client.head({path: '/users/foo4u'})
-        .then((headers) => {
-          console.log(headers);
-        });
-        .catch((err) => {
-          console.log(err);
-        });
+    .then((headers) => {
+      console.log(headers);
+    });
+    .catch((err) => {
+      console.log(err);
+    });
 
 ## Contributing
 
