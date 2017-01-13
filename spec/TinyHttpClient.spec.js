@@ -1,9 +1,15 @@
 /**
  * Tiny HTTP client specification.
  */
+'use strict';
+
+const server = require('./support/server');
+const TinyHttpClient = require('../TinyHttpClient');
+const expect = require('chai').expect;
 const clientOptions = {
-  protocol: 'https:',
-  hostname: 'api.github.com',
+  protocol: 'http:',
+  hostname: 'localhost',
+  port: 3001,
   headers: {
     'Accept': 'application/json',
     'User-Agent': 'tiny-http-client'
@@ -11,7 +17,7 @@ const clientOptions = {
 };
 
 describe('TinyHttpClient', () => {
-  const TinyHttpClient = require('../TinyHttpClient');
+
   var client;
 
   beforeEach(() => {
@@ -19,52 +25,43 @@ describe('TinyHttpClient', () => {
   });
 
   describe('#get', () => {
-    it('should get an existing document', (done) => {
-      client.get({path: '/users/foo4u'})
+
+    it('should get a body on success', () => {
+      return client.get({path: '/users/foo4u'})
       .then(JSON.parse)
-      .then((user) => {
-        expect(user.login).toEqual('foo4u');
-        done();
+      .then((body) => {
+        expect(body).to.be.an('object');
+        expect(body.login).to.equal('foo4u');
       })
-      .catch((err) => {
-        expect(error).toBeUndefined();
-        done(err);
-      });
     });
 
-    it('should fail when not found', (done) => {
-      client.get({path: '/users/foo4u-super-awesome-non-existing'})
-      .then(JSON.parse)
-      .then((user) => {
-        expect(user).toBeUndefined();
-        done();
-      })
+    it('should fail on error', () => {
+      return client.get({path: '/no/route'})
+      .then((body) => { throw new Error('should not be called'); })
       .catch((err) => {
-        expect(err).toBeDefined();
-        done();
+        expect(err).to.be.an('Error');
       });
     });
   });
 
   describe('#head', () => {
-    it('should get response headers', (done) => {
-      client.head({path: '/users/foo4u'})
+
+    it('should receive HTTP headers', () => {
+      return client.head({path: '/users/foo4u'})
       .then((headers) => {
-        expect(headers).toBeDefined();
-        done();
+        expect(headers).to.be.an('object');
       })
-      .catch((err) => {
-        expect(error).toBeUndefined();
-        done(err);
-      });
     });
 
-    it('should fail when not found', (done) => {
-      client.head({path: '/users/foo4u-super-awesome-non-existing-user'})
-      .then((headers) => {
-        expect(headers).toBeUndefined();
-        done();
-      })
+    it('should fail when not found', () => {
+      return client.head({path: '/no/route'})
+      .then((body) => { throw new Error('then should not be called'); })
+      .catch((err) => {
+        expect(err).to.be.an('Error');
+      });
+    });
+  });
+
       .catch((err) => {
         expect(err).toBeDefined();
         done(err);
