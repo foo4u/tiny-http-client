@@ -28,7 +28,6 @@ describe('TinyHttpClient', () => {
 
     it('should get a body on success', () => {
       return client.get({path: '/users/foo4u'})
-      .then(JSON.parse)
       .then((body) => {
         expect(body).to.be.an('object');
         expect(body.login).to.equal('foo4u');
@@ -39,7 +38,8 @@ describe('TinyHttpClient', () => {
       return client.get({path: '/no/route'})
       .then((body) => { throw new Error('should not be called'); })
       .catch((err) => {
-        expect(err).to.be.an('Error');
+        expect(err).to.have.property('message');
+        expect(err).to.have.property('response');
       });
     });
   });
@@ -75,13 +75,10 @@ describe('TinyHttpClient', () => {
     it('should POST data and resolve the response', () => {
       const postData = {message: 'Just a comment'};
       return client.post({path: '/gists/some/comments'}, postData)
-      .then(JSON.parse)
       .then((body) => {
         expect(body).to.be.an('object');
         expect(body.id).to.equal(2);
         expect(body.message).to.equal(postData.message);
-
-
       })
     });
 
@@ -90,7 +87,9 @@ describe('TinyHttpClient', () => {
       return client.post({path: '/users/foo4u/status'}, postData)
       .then((body) => { throw new Error('then should not be called'); })
       .catch((err) => {
-        expect(err).to.be.an('Error');
+        expect(err).to.have.property('message');
+        expect(err).to.have.property('response');
+        expect(err.response).not.to.have.property('body');
       });
     });
   });

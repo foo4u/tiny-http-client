@@ -1,5 +1,7 @@
 'use strict';
 
+const HttpError = require('./HttpError');
+
 /**
  * Creates a new tiny http client with the given options.
  * @param config
@@ -58,12 +60,19 @@ TinyHttpClient.prototype.exchange = function (options, data) {
     if (options.method === 'POST' && !data) { reject(Error('POST data required')); }
     const lib = options.protocol.startsWith('https') ? require('https') : require('http');
     const request = lib.request(options, (response) => {
-      if (response.statusCode < 200 || response.statusCode > 299) {
-        reject(new Error('HTTP request failed, status code: ' + response.statusCode));
-      }
       const body = [];
       response.on('data', (chunk) => body.push(chunk));
-      response.on('end', () => resolve(body.join('')));
+      response.on('end', () => {
+        try {
+          response.body = JSON.parse(body.join(''));
+        } catch(error) {
+          reject(new HttpError('HTTP response is not valid JSON: ' + response.statusCode, response));
+        }
+        if (response.statusCode < 200 || response.statusCode > 299) {
+          reject(new HttpError('HTTP request failed, status code: ' + response.statusCode, response));
+        }
+        resolve(response.body);
+      });
     });
     request.on('error', (err) => reject(err));
 
