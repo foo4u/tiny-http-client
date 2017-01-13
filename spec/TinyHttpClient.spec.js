@@ -62,9 +62,35 @@ describe('TinyHttpClient', () => {
     });
   });
 
+  describe('#post', () => {
+
+    it('should reject with an error if the POST body is missing', () => {
+      return client.post({path: '/users/foo4u/status'})
+      .then((body) => { throw new Error('then should not be called'); })
       .catch((err) => {
-        expect(err).toBeDefined();
-        done(err);
+        expect(err).to.be.an('Error');
+      });
+    });
+
+    it('should POST data and resolve the response', () => {
+      const postData = {message: 'Just a comment'};
+      return client.post({path: '/gists/some/comments'}, postData)
+      .then(JSON.parse)
+      .then((body) => {
+        expect(body).to.be.an('object');
+        expect(body.id).to.equal(2);
+        expect(body.message).to.equal(postData.message);
+
+
+      })
+    });
+
+    it('should fail on error', () => {
+      const postData = {foo: 'bar'};
+      return client.post({path: '/users/foo4u/status'}, postData)
+      .then((body) => { throw new Error('then should not be called'); })
+      .catch((err) => {
+        expect(err).to.be.an('Error');
       });
     });
   });
