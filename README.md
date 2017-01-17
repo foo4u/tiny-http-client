@@ -31,8 +31,8 @@ HTTP GET requests will internally buffer the body and return it once the promise
 
     client.get({path: '/users/foo4u'})
     .then(JSON.parse)
-    .then((jsonBody) => {
-      console.log(jsonBody);
+    .then((response) => {
+      console.log(response.body);
     });
     .catch((err) => {
       console.log(err);
