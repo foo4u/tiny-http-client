@@ -30,17 +30,7 @@ TinyHttpClient.prototype.get = function (options) {
  */
 TinyHttpClient.prototype.head = function (options) {
   const opts = Object.assign(this.config, options, {method: 'HEAD'});
-  return new Promise((resolve, reject) => {
-    const lib = opts.protocol.startsWith('https') ? require('https') : require('http');
-    const request = lib.request(opts, (response) => {
-      if (response.statusCode < 200 || response.statusCode > 299) {
-        reject(new Error('HTTP request failed, status code: ${response.statusCode}'));
-      }
-      resolve(response.headers);
-    });
-    request.on('error', (err) => reject(err));
-    request.end();
-  });
+  return this.exchange(opts);
 };
 
 /**
@@ -63,6 +53,9 @@ TinyHttpClient.prototype.exchange = function (options, data) {
       const body = [];
       response.on('data', (chunk) => body.push(chunk));
       response.on('end', () => {
+        if (options.method === 'HEAD') {
+          resolve(response);
+        }
         try {
           response.body = JSON.parse(body.join(''));
         } catch(error) {
@@ -71,7 +64,7 @@ TinyHttpClient.prototype.exchange = function (options, data) {
         if (response.statusCode < 200 || response.statusCode > 299) {
           reject(new HttpError('HTTP request failed, status code: ' + response.statusCode, response));
         }
-        resolve(response.body);
+        resolve(response);
       });
     });
     request.on('error', (err) => reject(err));

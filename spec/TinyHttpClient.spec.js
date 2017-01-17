@@ -28,16 +28,18 @@ describe('TinyHttpClient', () => {
 
     it('should get a body on success', () => {
       return client.get({path: '/users/foo4u'})
-      .then((body) => {
-        expect(body).to.be.an('object');
-        expect(body.login).to.equal('foo4u');
+      .then((response) => {
+        expect(response).to.be.an('object');
+        expect(response.body).to.be.an('object');
+        expect(response.body.login).to.equal('foo4u');
       })
     });
 
     it('should fail on error', () => {
       return client.get({path: '/no/route'})
-      .then((body) => { throw new Error('should not be called'); })
+      .then((response) => { throw new Error('should not be called'); })
       .catch((err) => {
+        expect(err.name).to.equal('HttpError');
         expect(err).to.have.property('message');
         expect(err).to.have.property('response');
       });
@@ -48,14 +50,16 @@ describe('TinyHttpClient', () => {
 
     it('should receive HTTP headers', () => {
       return client.head({path: '/users/foo4u'})
-      .then((headers) => {
-        expect(headers).to.be.an('object');
+      .then((response) => {
+        expect(response).to.be.an('object');
+        expect(response.headers).to.be.an('object');
+        expect(response).not.to.have.property('body');
       })
     });
 
     it('should fail when not found', () => {
       return client.head({path: '/no/route'})
-      .then((body) => { throw new Error('then should not be called'); })
+      .then((response) => { throw new Error('then should not be called'); })
       .catch((err) => {
         expect(err).to.be.an('Error');
       });
@@ -66,7 +70,7 @@ describe('TinyHttpClient', () => {
 
     it('should reject with an error if the POST body is missing', () => {
       return client.post({path: '/users/foo4u/status'})
-      .then((body) => { throw new Error('then should not be called'); })
+      .then((response) => { throw new Error('then should not be called'); })
       .catch((err) => {
         expect(err).to.be.an('Error');
       });
@@ -75,18 +79,20 @@ describe('TinyHttpClient', () => {
     it('should POST data and resolve the response', () => {
       const postData = {message: 'Just a comment'};
       return client.post({path: '/gists/some/comments'}, postData)
-      .then((body) => {
-        expect(body).to.be.an('object');
-        expect(body.id).to.equal(2);
-        expect(body.message).to.equal(postData.message);
+      .then((response) => {
+        expect(response).to.be.an('object');
+        expect(response.body).to.be.an('object');
+        expect(response.body.id).to.equal(2);
+        expect(response.body.message).to.equal(postData.message);
       })
     });
 
     it('should fail on error', () => {
       const postData = {foo: 'bar'};
       return client.post({path: '/users/foo4u/status'}, postData)
-      .then((body) => { throw new Error('then should not be called'); })
+      .then((response) => { throw new Error('then should not be called'); })
       .catch((err) => {
+        expect(err.name).to.equal('HttpError');
         expect(err).to.have.property('message');
         expect(err).to.have.property('response');
         expect(err.response).not.to.have.property('body');
