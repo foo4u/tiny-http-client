@@ -36,8 +36,8 @@ TinyHttpClient.prototype.head = function (options) {
 /**
  * Performs an HTTP POST request.
  *
- * @param options
- * @param data
+ * @param options standard Node.js HTTP options
+ * @param data the JSON object to POST
  */
 TinyHttpClient.prototype.post = function (options, data) {
   const opts = Object.assign(this.config, options, {method: 'POST'});
