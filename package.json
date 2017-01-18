@@ -1,6 +1,6 @@
 {
   "name": "tiny-http-client",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Zero dependency, native promise based HTTP/HTTPS client for Node.js 4+.",
   "main": "TinyHttpClient.js",
   "scripts": {

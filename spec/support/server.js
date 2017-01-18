@@ -37,6 +37,18 @@ app.post('/gists/:gist_id/comments', (req, res) => {
   });
 });
 
+app.put('/gists/:gist_id', (req, res) => {
+  if (!req.body) {
+    throw Error('Bad request, message missing');
+  }
+
+  res.status(201)
+  .json({
+    'id': 2,
+    'message': req.body.message
+  });
+});
+
 var server = app.listen(3001, function () {
   console.log('Listening on port %d', server.address().port);
 });

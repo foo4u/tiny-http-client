@@ -99,4 +99,38 @@ describe('TinyHttpClient', () => {
       });
     });
   });
+
+  describe('#put', () => {
+
+    it('should reject with an error if the PUT body is missing', () => {
+      return client.put({path: '/gists/some'})
+      .then((response) => { throw new Error('then should not be called'); })
+      .catch((err) => {
+        expect(err).to.be.an('Error');
+      });
+    });
+
+    it('should PUT data and resolve the response', () => {
+      const data = {message: 'Just a comment'};
+      return client.put({path: '/gists/some'}, data)
+      .then((response) => {
+        expect(response).to.be.an('object');
+        expect(response.body).to.be.an('object');
+        expect(response.body.id).to.equal(2);
+        expect(response.body.message).to.equal(data.message);
+      })
+    });
+
+    it('should fail on error', () => {
+      const data = {foo: 'bar'};
+      return client.put({path: '/users/foo4u/status'}, data)
+      .then((response) => { throw new Error('then should not be called'); })
+      .catch((err) => {
+        expect(err.name).to.equal('HttpError');
+        expect(err).to.have.property('message');
+        expect(err).to.have.property('response');
+        expect(err.response).not.to.have.property('body');
+      });
+    });
+  });
 });

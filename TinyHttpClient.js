@@ -45,9 +45,23 @@ TinyHttpClient.prototype.post = function (options, data) {
   return this.exchange(opts, data);
 };
 
+/**
+ * Performs an HTTP PUT request.
+ *
+ * @param options standard Node.js HTTP options
+ * @param data the JSON object to PUT
+ */
+TinyHttpClient.prototype.put = function (options, data) {
+  const opts = Object.assign({}, this.config, options, {method: 'PUT'});
+  if (!opts.headers['Content-Type']) {
+    opts.headers['Content-Type'] = 'application/json';
+  }
+  return this.exchange(opts, data);
+};
+
 TinyHttpClient.prototype.exchange = function (options, data) {
   return new Promise((resolve, reject) => {
-    if (options.method === 'POST' && !data) { reject(Error('POST data required')); }
+    if (['POST', 'PUT'].indexOf(options.method) > 0 && !data) { reject(Error(options.method + ' data required')); }
     const lib = options.protocol.startsWith('https') ? require('https') : require('http');
     const request = lib.request(options, (response) => {
       const body = [];
