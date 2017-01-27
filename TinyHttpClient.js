@@ -81,6 +81,7 @@ TinyHttpClient.prototype.exchange = function (options, data) {
         resolve(response);
       });
     });
+    request.on('aborted', (err) => reject(err));
     request.on('error', (err) => reject(err));
 
     if (data) {
