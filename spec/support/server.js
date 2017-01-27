@@ -37,6 +37,15 @@ app.post('/gists/:gist_id/comments', (req, res) => {
   });
 });
 
+app.post('/gists/:gist_id/oops', (req, res) => {
+  if (!req.body) {
+    throw Error('Bad request, message missing');
+  }
+
+  res.status(400)
+  .end('<html><head><title>Error</title></head><body>Something went wrong</body></html>');
+});
+
 app.put('/gists/:gist_id', (req, res) => {
   if (!req.body) {
     throw Error('Bad request, message missing');

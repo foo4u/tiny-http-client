@@ -133,4 +133,24 @@ describe('TinyHttpClient', () => {
       });
     });
   });
+
+  describe('#exchange', () => {
+
+    it('should reject with an HttpError if the response body is not JSON', () => {
+      const postData = {message: 'Just a comment'};
+      return client.post({path: '/gists/some/oops'}, postData)
+      .then((response) => {
+        expect(response).to.be.an('object');
+        expect(response.body).to.be.an('object');
+        expect(response.body.id).to.equal(2);
+        expect(response.body.message).to.equal(postData.message);
+      })
+      .catch((err) => {
+        expect(err.name).to.equal('HttpError');
+        expect(err).to.have.property('message');
+        expect(err).to.have.property('response');
+        expect(err.response).not.to.have.property('body');
+      });
+    });
+  });
 });
